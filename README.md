@@ -1,6 +1,6 @@
-Cacti
+Barrel
 =====
-_Kactoos API Wrapper_
+_Barrel cactus_
 
-Cacti is an android app build on top of titanium mobile framework, it shows kactoos
-API and use ruby as main language.
+Barrel is an android app build on top of titanium mobile framework, it shows kactoos
+API and use javascript as main language.
