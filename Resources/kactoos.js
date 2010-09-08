@@ -1,3 +1,6 @@
+// include configuration file.
+Titanium.include( "config.js" );
+
 var Kactoos = {
     BASE_URI: "http://www.kactoos.com/api"
 };
@@ -102,14 +105,14 @@ Kactoos.Util = {
             data = {};
         }
 
-        var f = data["format"];delete data["format"];
+        var f = data["format"]; delete data["format"];
 
         if ( !f ) {
             f = "json";
         }
 
-        var a = data["a"];delete data["a"];
-        var k = data["k"];delete data["k"];
+        var a = data["a"]; delete data["a"];
+        var k = data["k"]; delete data["k"];
 
         var qs = Kactoos.Util.toQueryString( data ); qs = qs ? "&" + qs : null;
         path = Kactoos.BASE_URI + path + "?format=" + f + "&appName=" + a + "&apiKey=" + k + qs;

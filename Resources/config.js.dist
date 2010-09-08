@@ -1,0 +1,6 @@
+var CONFIG = {
+    APP: "<APP_NAME>",
+    KEY: "<API_KEY>"
+};
+
+
