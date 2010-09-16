@@ -9,8 +9,9 @@ function _loadProducts( win ) {
     var product = new Product( CONFIG.APP, CONFIG.KEY );
     product.list( function () {
         var response = eval( "(" + this.responseText + ")" );
-    Ti.API.debug(response);
+        Ti.API.debug( response );
         var products = response["products"];
+        Ti.API.debug( products );
         var data = [];
 
         for ( var item in products ) ( function ( item ) {

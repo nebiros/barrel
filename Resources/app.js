@@ -43,31 +43,5 @@ var noticesTab = Titanium.UI.createTab( {
 tabGroup.addTab( usersTab );
 tabGroup.addTab( noticesTab );
 
-//tabGroup.addEventListener( "focus", function ( e ) {
-////    Ti.API.debug( "tabGroup focus!" );
-////    Ti.API.debug( "tabGroup active: " + this.activeTab );
-//    Ti.API.debug( "tabGroup index: " + e.index );
-////    Ti.API.debug( "tabGroup previousIndex: " + e.previousIndex );
-////    Ti.API.debug( "tabGroup previousTab: " + e.previousTab );
-////    Ti.API.debug( "tabGroup tab: " + e.tab );
-//
-//    // seems like there's a bug with tabs here.
-//    switch ( e.index ) {
-//        case 0: // notices tab.
-//            Titanium.App.Properties.setBool( "reloadNotices", true );
-//            break;
-//
-//        case 1: // users tab.
-//            Titanium.App.Properties.setBool( "reloadUsers", true );
-//            break;
-//    }
-//} );
-
 // open tab group.
 tabGroup.open();
-
-//tabGroup.addEventListener( 'focus', function( e ) {
-//    setTimeout( function() {
-//        Ti.API.debug( 'tab changed to ' + tabGroup.activeTab );
-//    }, 100 );
-//} );

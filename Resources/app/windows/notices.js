@@ -19,8 +19,7 @@ function _loadNotices( win ) {
 
     var notice = new Notice();
     var notices = notice.list();
-//Ti.API.debug(notices);
-Ti.API.debug(notices.length);
+    Ti.API.debug( notices.length );
 
     var tableView = Titanium.UI.createTableView();
 
@@ -123,7 +122,7 @@ Ti.API.debug(notices.length);
         row.add( productDataView );
         data.push( row );
     } )( key );
-
+    // close db model.
     notice.close();
 
     // add the table view to the window.
