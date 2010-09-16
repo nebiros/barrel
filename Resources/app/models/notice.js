@@ -81,6 +81,15 @@ Notice = function ( app, key ) {
             }
             
             return data;
+        },
+        remove: function ( id ) {
+            id = parseInt( id );
+
+            try {
+                db.execute( "DELETE FROM notification WHERE notification.id = ?", id );
+            } catch ( e ) {
+                throw e;
+            }
         }
     };
 };

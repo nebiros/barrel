@@ -117,9 +117,48 @@ function _loadNotices( win ) {
             width: 200
         } );
 
-        productDataView.add( price );
-        
+        productDataView.add( price );        
         row.add( productDataView );
+
+        var skullIcon = Titanium.UI.createImageView( {
+            image: "../../images/icons/22-skull-n-crossbones.png",
+            top: 35,
+            right: 5,
+            width: 16,
+            height: 16,
+            canScale: true
+        } );
+
+        var _removeNotification = function ( e ) {
+            var confirmation = Titanium.UI.createAlertDialog( {
+                title: "Notificación",
+                message: "Desea borrar este producto de las notificaciones de precios?",
+                buttonNames: ["Si", "No"],
+                cancel: 1
+            } );
+
+            confirmation.addEventListener( "click", function ( e ) {
+                switch ( parseInt( e.index ) ) {
+                    case 0:
+                        var notice = new Notice();
+                        notice.remove( notices[key].id );
+                        notice.close();
+
+                        _loadNotices( win );
+                        break;
+
+                    case 1:
+                        this.hide();
+                        break;
+                }
+            } );
+
+            confirmation.show();
+        }
+
+        skullIcon.addEventListener( "click", _removeNotification );
+
+        row.add( skullIcon );
         data.push( row );
     } )( key );
     // close db model.
