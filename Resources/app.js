@@ -1,62 +1,73 @@
 // this sets the background color of the master UIView (when there are no windows/tab groups on it)
-Titanium.UI.setBackgroundColor( '#000' );
+Titanium.UI.setBackgroundColor( "#000" );
 
 // create tab group
-var tabGroup = Titanium.UI.createTabGroup();
+var tabGroup = Titanium.UI.createTabGroup( { 
+    barColor: "#336699"
+} );
+
+//tabGroup.fireEvent( "reloadUsers", {} );
+//tabGroup.fireEvent( "reloadNotices", {} );
 
 // create base UI tab and root window
 var usersWindow = Titanium.UI.createWindow( {
-    backgroundColor: '#fff',
-    url: 'kactoos/top_users.js'
+    url: "app/windows/top_users.js",
+    title: "+ Usuarios"
 } );
 
+// focus/blur doesn't work for android (http://j.mp/9DDgdL), so I just add the
+// tabgroup object to each window tab and then in the sub-context I'm asking
+// for the activeTab to refresh the window content.
+usersWindow.tabGroup = tabGroup;
+
 var usersTab = Titanium.UI.createTab( {
-    title: '+ Usarios',
-    icon: 'images/tabs/KS_nav_views.png',    
+    title: "+ Usuarios",
+    icon: "images/icons/28-star.png",
     window: usersWindow
 } );
 
-//var usersLabel = Titanium.UI.createLabel( {
-//    color: '#999',
-//	text: '+ Usuarios',
-//	font: { fontSize: 20, fontFamily: 'Helvetica Neue' },
-//	textAlign: 'center',
-//	width: 'auto'
-//} );
-//
-//usersWindow.add( usersLabel );
+var noticesWindow = Titanium.UI.createWindow( {
+    url: "app/windows/notices.js",
+    title: "Notificaciones"
+} );
 
-//
-// create controls tab and root window
-//
-//var win2 = Titanium.UI.createWindow({
-//    title:'Tab 2',
-//    backgroundColor:'#fff'
-//});
-//var tab2 = Titanium.UI.createTab({
-//    icon:'images/tabs/KS_nav_ui.png',
-//    title:'Tab 2',
-//    window:win2
-//});
-//
-//var label2 = Titanium.UI.createLabel({
-//	color:'#999',
-//	text:'I am Window 2',
-//	font:{fontSize:20,fontFamily:'Helvetica Neue'},
-//	textAlign:'center',
-//	width:'auto'
-//});
-//
-//win2.add(label2);
+noticesWindow.tabGroup = tabGroup;
 
+var noticesTab = Titanium.UI.createTab( {
+    title: "Notificaciones",
+    icon: "images/icons/11-clock.png",
+    window: noticesWindow
+} );
 
-
-//
 //  add tabs
-//
 tabGroup.addTab( usersTab );
-//tabGroup.addTab(tab2);  
+tabGroup.addTab( noticesTab );
 
+//tabGroup.addEventListener( "focus", function ( e ) {
+////    Ti.API.debug( "tabGroup focus!" );
+////    Ti.API.debug( "tabGroup active: " + this.activeTab );
+//    Ti.API.debug( "tabGroup index: " + e.index );
+////    Ti.API.debug( "tabGroup previousIndex: " + e.previousIndex );
+////    Ti.API.debug( "tabGroup previousTab: " + e.previousTab );
+////    Ti.API.debug( "tabGroup tab: " + e.tab );
+//
+//    // seems like there's a bug with tabs here.
+//    switch ( e.index ) {
+//        case 0: // notices tab.
+//            Titanium.App.Properties.setBool( "reloadNotices", true );
+//            break;
+//
+//        case 1: // users tab.
+//            Titanium.App.Properties.setBool( "reloadUsers", true );
+//            break;
+//    }
+//} );
 
-// open tab group
+// open tab group.
 tabGroup.open();
+
+//tabGroup.addEventListener( 'focus', function( e ) {
+//    setTimeout( function() {
+//        Ti.API.debug( 'tab changed to ' + tabGroup.activeTab );
+//    }, 100 );
+//} );
