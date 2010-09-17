@@ -4,16 +4,22 @@ Product = function ( app, key ) {
     var a = app || CONFIG.APP;
     var k = key || CONFIG.KEY;
 
-    var httpClient = Titanium.Network.createHTTPClient();
+    var xhr = Titanium.Network.createHTTPClient();
 
     return {
         list: function ( callback, opts ) {
             if ( typeof callback !== "function" ) {
-                throw "callback must be a function";
+                alert( "callback must be a function" );
+                return;
             }
 
             if ( typeof opts == "undefined" ) {
                 opts = {};
+            }
+
+            if ( false === Titanium.Network.online ) {
+                alert( "No existe conexión a internet!" );
+                return;
             }
 
             opts["search"] = opts["search"] || null;
@@ -29,19 +35,16 @@ Product = function ( app, key ) {
             opts["k"] = k;
 
             var path = Barrel.Request.path( "/products/get-product-list", opts );
-            Ti.API.debug( path );
+            Ti.API.debug( "path: " + path );
 
-            try {
-                httpClient.open( "GET", path );
-                httpClient.onload = callback;
-                httpClient.statusIndicator = Barrel.UI.statusInidicator();
-                httpClient.send();
-
-                if ( httpClient.OPENED == httpClient.readyState ) {
-                    httpClient.statusIndicator.show();
-                }
+            try {                
+                xhr.open( "GET", path, false );
+                xhr.timeout = 1000000;
+                xhr.onload = callback;
+                xhr.statusIndicator = Barrel.UI.statusInidicator();
+                xhr.send();
             } catch ( e ) {
-                throw e;
+                alert( e );
             }
         },
         users: function ( callback, opts ) {
@@ -57,53 +60,58 @@ Product = function ( app, key ) {
                 throw "product id does not exist";
             }
 
+            if ( false === Titanium.Network.online ) {
+                alert( "No existe conexión a internet!" );
+                return;
+            }
+
             opts["idProduct"] = parseInt( opts["idProduct"] );
 
             opts["a"] = a;
             opts["k"] = k;
 
             var path = Barrel.Request.path( "/products/get-product-users", opts );
-            Ti.API.debug( path );
+            Ti.API.debug( "path: " + path );
 
             try {
-                httpClient.open( "GET", path );
-                httpClient.onload = callback;
-                httpClient.statusIndicator = Barrel.UI.statusInidicator();
-                httpClient.send();
-
-                if ( httpClient.OPENED == httpClient.readyState ) {
-                    httpClient.statusIndicator.show();
-                }
+                xhr.open( "GET", path );
+                xhr.timeout = 1000000;
+                xhr.onload = callback;
+                xhr.statusIndicator = Barrel.UI.statusInidicator();
+                xhr.send();
             } catch ( e ) {
-                throw e;
+                alert( e );
             }
         },
         categories: function ( callback, opts ) {
             if ( typeof callback !== "function" ) {
-                throw "callback must be a function";
+                alert( "callback must be a function" );
+                return;
             }
 
             if ( typeof opts == "undefined" ) {
                 opts = {};
             }
 
+            if ( false === Titanium.Network.online ) {
+                alert( "No existe conexión a internet!" );
+                return;
+            }
+
             opts["a"] = a;
             opts["k"] = k;
 
             var path = Barrel.Request.path( "/products/get-product-categories", opts );
-            Ti.API.debug( path );
+            Ti.API.debug( "path: " + path );
 
             try {
-                httpClient.open( "GET", path );
-                httpClient.onload = callback;
-                httpClient.statusIndicator = Barrel.UI.statusInidicator();
-                httpClient.send();
-
-                if ( httpClient.OPENED == httpClient.readyState ) {
-                    httpClient.statusIndicator.show();
-                }
+                xhr.open( "GET", path );
+                xhr.timeout = 1000000;
+                xhr.onload = callback;
+                xhr.statusIndicator = Barrel.UI.statusInidicator();
+                xhr.send();
             } catch ( e ) {
-                throw e;
+                alert( e );
             }
         }
     };

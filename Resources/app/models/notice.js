@@ -13,25 +13,25 @@ Notice = function ( app, key ) {
     _createTable();
 
     return {
-        save: function ( opts ) {
-            if ( typeof opts == "undefined" ) {
-                throw "opts can't be empty";
-            } else if ( typeof opts != "object" ) {
-                throw "opts must be an object";
+        add: function ( data ) {
+            if ( typeof data == "undefined" ) {
+                throw "data can't be empty";
+            } else if ( typeof data != "object" ) {
+                throw "data must be an object";
             }
 
             try {
                 db.execute( "INSERT INTO notification (id, product_id, name, price, image, users, url) VALUES (?, ?, ?, ?, ?, ?, ?)",
                     null,
-                    opts["productId"],
-                    opts["name"],
-                    opts["price"],
-                    opts["image"],
-                    opts["users"],
-                    opts["url"]
+                    data["productId"],
+                    data["name"],
+                    data["price"],
+                    data["image"],
+                    data["users"],
+                    data["url"]
                 );
             } catch ( e ) {
-                throw e;
+                alert( e );
             }
 
             return db.lastInsertRowId;
@@ -46,7 +46,7 @@ Notice = function ( app, key ) {
                     return true;
                 }
             } catch ( e ) {
-                throw e;
+                alert( e );
             }
 
             return false;
@@ -77,7 +77,7 @@ Notice = function ( app, key ) {
                     rows.next();
                 }
             } catch ( e ) {
-                throw e;
+                alert( e );
             }
             
             return data;
@@ -88,7 +88,19 @@ Notice = function ( app, key ) {
             try {
                 db.execute( "DELETE FROM notification WHERE notification.id = ?", id );
             } catch ( e ) {
-                throw e;
+                alert( e );
+            }
+        },
+        // TODO: I'll make a class with all db crud methods, and implement
+        // a .extends to extend an object from another.
+        updatePrice: function ( id, price ) {
+            id = parseInt( id );
+            price = parseInt( price );
+
+            try {
+                db.execute( "UPDATE notification SET price = ?", price );
+            } catch ( e ) {
+                alert( e );
             }
         }
     };

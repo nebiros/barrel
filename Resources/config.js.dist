@@ -1,6 +1,7 @@
 var CONFIG = {
     APP: "<APP_NAME>",
-    KEY: "<API_KEY>"
+    KEY: "<API_KEY>",
+    NOTICES_INTERVAL: 600000 // 10 minutes
 };
 
 
