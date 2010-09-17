@@ -56,14 +56,14 @@ function _loadNotices( win ) {
 
     for ( var key = 0; key < notices.length; key++ ) ( function ( key ) {
         var product = new Product();
-        // get product data to look if still is active, if not, drop it, if is active
+        // get product data and look if still is active, if not, drop it, if is active
         // we going to create a listener to check his price.
         product.list( function () {
             if ( 200 == this.status ) {
                 var response = eval( "(" + this.responseText + ")" );
                 var productData = response["products"][0];
 
-                // if this product is not active the don't draw it.
+                // if this product is not active then don't draw it.
                 if ( 1 != parseInt( productData.activo ) ) {
                     var notice = new Notice();
                     notice.remove( notices[key].id );
@@ -83,7 +83,7 @@ function _loadNotices( win ) {
                 } );
 
                 var _openProductUrl = function ( e ) {
-                    Titanium.Platform.openURL( notices[key].short_url );
+                    Titanium.Platform.openURL( notices[key].url );
                 }
 
                 productDataView.addEventListener( "click", _openProductUrl );
