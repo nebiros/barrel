@@ -2,7 +2,7 @@ Titanium.include( "../models/product.js" );
 Titanium.include( "../models/notice.js" );
 
 var win = Titanium.UI.currentWindow;
-_loadProducts( win );
+ _loadProducts( win );
 
 function _loadProducts( win ) {
     // get prducts with most users added.
@@ -18,11 +18,10 @@ function _loadProducts( win ) {
             Ti.API.debug( "products length: " + products.length );
             var data = [];
 
-            for ( var item = 0; item < products.length; item++ ) ( function ( item ) {
+            for ( var key = 0; key < products.length; key++ ) ( function ( item ) {
                 var row = Titanium.UI.createTableViewRow( {
                     height: 80,
-                    className: "row",
-                    backgroundColor: "#2E2E2E"
+                    className: "row"
                 } );
 
                 var productDataView = Titanium.UI.createView( {
@@ -36,12 +35,9 @@ function _loadProducts( win ) {
                 var usuarios = products[item].usuarios;
                 var precioActual = products[item].precio_actual;
                 var idProducto = products[item].id_producto;
-
-                Ti.API.debug( "id_product: " + idProducto + " -- " + nombreProducto + " -- usuarios: " + usuarios );
-
+                
                 var _openProductUrl = function ( e ) {
                     Titanium.Platform.openURL( url );
-//                    alert( "id_product: " + idProducto + " -- " + nombreProducto + " -- usuarios: " + usuarios );
                 }
 
                 productDataView.addEventListener( "click", _openProductUrl );
@@ -93,16 +89,15 @@ function _loadProducts( win ) {
                 } );
 
                 productDataView.add( price );
-
                 row.add( productDataView );
 
                 var notificationIcon = Titanium.UI.createImageView( {
                     image: "../../images/icons/11-clock.png",
-                    top: 35,
+                    top: 25,
                     right: 5,
-                    width: 16,
-                    height: 16,
-                    canScale: true
+                    width: 32,
+                    height: 32,
+                    canScale: false
                 } );
 
                 var _openNotificationDialog = function ( e ) {
@@ -147,13 +142,12 @@ function _loadProducts( win ) {
 
                 notificationIcon.addEventListener( "click", _openNotificationDialog );
                 row.add( notificationIcon );
-                
+                row.className = "item" + key;
                 data[item] = row;
-            } )( item );
+            } )( key );
 
             var tableView = Titanium.UI.createTableView( {
-                data: data,
-                scrollable: true
+                data: data
             } );
 
             // add the table view to the window.

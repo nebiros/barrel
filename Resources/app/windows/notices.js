@@ -12,6 +12,8 @@ win.tabGroup.addEventListener( "focus", function( e ) {
     }, 100 );
 } );
 
+Titanium.App.Properties.setBool( "noNotices", false );
+
 _loadNotices( win );
 
 function _loadNotices( win ) {
@@ -24,13 +26,12 @@ function _loadNotices( win ) {
 
     var tableView = Titanium.UI.createTableView();
 
-    if ( 0 == notices.length ) {
+    if ( 0 == notices.length && false === Titanium.App.Properties.getBool( "noNotices" ) ) {
         win.remove( tableView );
 
         var row = Titanium.UI.createTableViewRow( {
             height: 80,
-            className: "row",
-            backgroundColor: "#2E2E2E"
+            className: "row"
         } );
 
         var label = Titanium.UI.createLabel( {
@@ -42,9 +43,12 @@ function _loadNotices( win ) {
         } );
         
         row.add( label );
-        tableView.data = [row];
+        tableView.setData( [row] );
         win.add( tableView );
         indicator.hide();
+        notice.close();
+
+        Titanium.App.Properties.setBool( "noNotices", true );
         // go away!.
         return;
     }
@@ -73,8 +77,7 @@ function _loadNotices( win ) {
 
                 var row = Titanium.UI.createTableViewRow( {
                     height: 80,
-                    className: "row",
-                    backgroundColor: "#2E2E2E"
+                    className: "row"
                 } );
 
                 var productDataView = Titanium.UI.createView( {
@@ -139,11 +142,11 @@ function _loadNotices( win ) {
 
                 var skullIcon = Titanium.UI.createImageView( {
                     image: "../../images/icons/22-skull-n-crossbones.png",
-                    top: 35,
+                    top: 25,
                     right: 5,
-                    width: 16,
-                    height: 16,
-                    canScale: true
+                    width: 32,
+                    height: 32,
+                    canScale: false
                 } );
 
                 var _removeNotification = function ( e ) {
@@ -175,6 +178,7 @@ function _loadNotices( win ) {
 
                 skullIcon.addEventListener( "click", _removeNotification );
                 row.add( skullIcon );
+                row.className = "item" + key;
                 data[key] = row;
 
                 setInterval( function () {
