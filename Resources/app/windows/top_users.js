@@ -1,15 +1,15 @@
 Titanium.include( "../models/product.js" );
 Titanium.include( "../models/notice.js" );
 
-function main() {
-    var win = Titanium.UI.currentWindow;
-    var tableView = Titanium.UI.createTableView( { top: 40 } );
+var win = Titanium.UI.currentWindow;
+var tableView;
 
-    _search( win, tableView );
-    _loadProducts( win, tableView );
+function main() {    
+    _search();
+    _loadProducts();
  }
 
-function _search( win, tableView ) {
+function _search() {
     var search = Titanium.UI.createSearchBar( {
         barColor: "#000",
         showCancel: true,
@@ -20,16 +20,18 @@ function _search( win, tableView ) {
 
     search.addEventListener( "return", function ( e ) {
         this.blur();
-        this.focus();
+//        this.focus();
 
         var product = new Product();
         product.list( function () {
                 this.statusIndicator.show();
 
                 if ( 200 == this.status ) {
+                    win.remove( tableView );
                     var response = eval( "(" + this.responseText + ")" );
                     var products = response["products"];
                     Ti.API.debug( "search products length: " + products.length );
+                    tableView = Titanium.UI.createTableView( { top: 40 } );
                     tableView.data = [];
                     tableView.setData( _drawProductsTable( products ) );
                     // add the table view to the window.
@@ -43,13 +45,13 @@ function _search( win, tableView ) {
                 orderBy: "usuarios DESC",
                 imageWidth: 48,
                 search: e.value
-            } );
+        } );
     } );
 
     win.add( search );
 }
 
-function _loadProducts( win, tableView ) {
+function _loadProducts() {
     var product = new Product();
     
     product.list( function () {
@@ -61,6 +63,7 @@ function _loadProducts( win, tableView ) {
             var response = eval( "(" + this.responseText + ")" );
             var products = response["products"];
             Ti.API.debug( "products length: " + products.length );
+            tableView = Titanium.UI.createTableView( { top: 40 } );
             tableView.data = [];
             tableView.setData( _drawProductsTable( products ) );
             // add the table view to the window.
@@ -85,7 +88,7 @@ function _drawProductsTable( products ) {
 
     var data = [];
 
-    for ( var key = 0; key < products.length; key++ ) ( function ( item ) {
+    for ( var key = 0; key < products.length; key++ ) ( function ( key ) {
         var row = Titanium.UI.createTableViewRow( {
             height: 80,
             className: "row"
@@ -95,19 +98,19 @@ function _drawProductsTable( products ) {
             height: 80,
             width: "auto"
         } );
-
-        var url = products[item].short_url;
-        var imagen = products[item].imagen;
-        var nombreProducto = products[item].nombre_producto;
-        var usuarios = products[item].usuarios || 0;
-        var precioActual = products[item].precio_actual;
-        var idProducto = products[item].id_producto;
+        
+        var imagen = products[key].imagen;
+        var nombreProducto = products[key].nombre_producto;
+        var usuarios = products[key].usuarios || 0;
+        var precioActual = products[key].precio_actual;
+        var idProducto = products[key].id_producto;
+        var url = products[key].short_url || Barrel.BASE_URI + "/oferta/" + idProducto;
 
         var _openProductUrl = function ( e ) {
             Titanium.Platform.openURL( url );
         }
 
-        Ti.API.debug( "id: " + idProducto + " -- " + nombreProducto );
+        Ti.API.debug( "id: " + idProducto + " -- " + nombreProducto + " -- " + url );
 
         productDataView.addEventListener( "click", _openProductUrl );
 
@@ -161,7 +164,7 @@ function _drawProductsTable( products ) {
         row.add( productDataView );
 
         var notificationIcon = Titanium.UI.createImageView( {
-            image: "../../images/icons/11-clock.png",
+            image: "../../images/icons/11-clock-white.png",
             top: 25,
             right: 5,
             width: 32,
@@ -212,7 +215,7 @@ function _drawProductsTable( products ) {
         notificationIcon.addEventListener( "click", _openNotificationDialog );
         row.add( notificationIcon );
         row.className = "item" + key;
-        data[item] = row;
+        data[key] = row;
     } )( key );
 
     return data;

@@ -35,7 +35,7 @@ Product = function ( app, key ) {
             opts["k"] = k;
 
             var path = Barrel.Request.path( "/products/get-product-list", opts );
-Ti.API.debug(path);
+            Ti.API.debug( "url: " + path );
             try {                
                 xhr.open( "GET", path, false );
                 xhr.timeout = 1000000;
@@ -70,7 +70,7 @@ Ti.API.debug(path);
             opts["k"] = k;
 
             var path = Barrel.Request.path( "/products/get-product-users", opts );
-
+            Ti.API.debug( "url: " + path );
             try {
                 xhr.open( "GET", path );
                 xhr.timeout = 1000000;
@@ -100,7 +100,7 @@ Ti.API.debug(path);
             opts["k"] = k;
 
             var path = Barrel.Request.path( "/products/get-product-categories", opts );
-
+            Ti.API.debug( "url: " + path );
             try {
                 xhr.open( "GET", path );
                 xhr.timeout = 1000000;

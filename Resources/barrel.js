@@ -2,7 +2,8 @@
 Titanium.include( "config.js" );
 
 var Barrel = {
-    BASE_URI: "http://www.kactoos.com/api"
+    BASE_URI: "http://www.kactoos.com",
+    API_URI: "http://www.kactoos.com/api"
 };
 
 Barrel.Request = {
@@ -13,7 +14,7 @@ Barrel.Request = {
 
         var stack = [], counter = 0;
 
-        // TODO: add support for more than one level.
+        // TODO: add support for query string arrays.
         for ( key in opts ) {
             var value = ( opts[key] || opts[key] === 0 ? encodeURIComponent( opts[key] ) : "" )
             stack[counter] = encodeURIComponent( key ) + "=" + value;
@@ -37,7 +38,7 @@ Barrel.Request = {
         var k = opts["k"];delete opts["k"];
 
         var qs = Barrel.Request.toQueryString( opts );qs = qs ? "&" + qs : null;
-        path = Barrel.BASE_URI + path + "?format=" + f + "&appName=" + a + "&apiKey=" + k + qs;
+        path = Barrel.API_URI + path + "?format=" + f + "&appName=" + a + "&apiKey=" + k + qs;
         return path;
     }
 };

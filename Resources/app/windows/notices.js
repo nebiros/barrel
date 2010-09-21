@@ -1,23 +1,23 @@
 Titanium.include( "../models/notice.js" );
 Titanium.include( "../models/product.js" );
 
-function main() {
-    var win = Titanium.UI.currentWindow;
+var win = Titanium.UI.currentWindow;
+var tableView;
 
+function main() {
     // HACK: get active tab index.
     win.tabGroup.addEventListener( "focus", function( e ) {
         setTimeout( function() {
             if ( 1 === win.tabGroup.activeTab ) {
-                _loadNotices( win );
+                _loadNotices();
             }
         }, 100 );
     } );
-
-    // set flag.
-    Titanium.App.Properties.setBool( "noNotices", false );
+    
+    _loadNotices();
 }
 
-function _loadNotices( win ) {
+function _loadNotices() {
     var indicator = Barrel.UI.statusInidicator();
     indicator.show();
 
@@ -25,9 +25,7 @@ function _loadNotices( win ) {
     var notices = notice.list();
     Ti.API.debug( "notices length: " + notices.length );
 
-    var tableView = Titanium.UI.createTableView();
-
-    if ( 0 == notices.length && false === Titanium.App.Properties.getBool( "noNotices" ) ) {
+    if ( 0 == notices.length ) {
         win.remove( tableView );
 
         var row = Titanium.UI.createTableViewRow( {
@@ -44,6 +42,8 @@ function _loadNotices( win ) {
         } );
         
         row.add( label );
+        tableView = Titanium.UI.createTableView();
+        tableView.data = [];
         tableView.setData( [row] );
         win.add( tableView );
         indicator.hide();
@@ -54,9 +54,6 @@ function _loadNotices( win ) {
         return;
     }
 
-    // remove no notices label.
-    win.remove( tableView );
-    
     var data = [];
 
     for ( var key = 0; key < notices.length; key++ ) ( function ( key ) {
@@ -142,7 +139,7 @@ function _loadNotices( win ) {
                 row.add( productDataView );
 
                 var skullIcon = Titanium.UI.createImageView( {
-                    image: "../../images/icons/22-skull-n-crossbones.png",
+                    image: "../../images/icons/22-skull-n-crossbones-white.png",
                     top: 25,
                     right: 5,
                     width: 32,
@@ -165,7 +162,7 @@ function _loadNotices( win ) {
                                 notice.remove( notices[key].id );
                                 notice.close();
 
-                                _loadNotices( win );
+                                _loadNotices();
                                 break;
 
                             case 1:
@@ -194,7 +191,9 @@ function _loadNotices( win ) {
     // HACK: delay this process to draw rows into the view, why? because the kactoos
     // API doesn't sopport get multiple products usinf product ids.
     setTimeout( function() {
-        // add the table view to the window.
+        win.remove( tableView );
+        tableView = Titanium.UI.createTableView();
+        tableView.data = [];
         tableView.setData( data );
         win.add( tableView );
         indicator.hide();
@@ -223,7 +222,7 @@ function _askPrice( data ) {
                 } );
                 
                 notification.show();
-                _loadNotices( win );
+                _loadNotices();
             }
         }
     }, {idProduct: data.productId, limit: 1} );
