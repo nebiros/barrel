@@ -35,7 +35,7 @@ Product = function ( app, key ) {
             opts["k"] = k;
 
             var path = Barrel.Request.path( "/products/get-product-list", opts );
-
+Ti.API.debug(path);
             try {                
                 xhr.open( "GET", path, false );
                 xhr.timeout = 1000000;

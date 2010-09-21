@@ -45,7 +45,7 @@ Barrel.Request = {
 Barrel.UI = {
     statusInidicator: function ( message ) {
         if ( typeof message == "undefined" ) {
-            message = "Cargando ...";
+            message = "Cargando...";
         }
 
         var indicator = Titanium.UI.createActivityIndicator( {

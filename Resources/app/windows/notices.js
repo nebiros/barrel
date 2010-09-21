@@ -1,20 +1,21 @@
 Titanium.include( "../models/notice.js" );
 Titanium.include( "../models/product.js" );
 
-var win = Titanium.UI.currentWindow;
+function main() {
+    var win = Titanium.UI.currentWindow;
 
-// HACK: get active tab index.
-win.tabGroup.addEventListener( "focus", function( e ) {
-    setTimeout( function() {
-        if ( 1 === win.tabGroup.activeTab ) {
-            _loadNotices( win );
-        }
-    }, 100 );
-} );
+    // HACK: get active tab index.
+    win.tabGroup.addEventListener( "focus", function( e ) {
+        setTimeout( function() {
+            if ( 1 === win.tabGroup.activeTab ) {
+                _loadNotices( win );
+            }
+        }, 100 );
+    } );
 
-Titanium.App.Properties.setBool( "noNotices", false );
-
-_loadNotices( win );
+    // set flag.
+    Titanium.App.Properties.setBool( "noNotices", false );
+}
 
 function _loadNotices( win ) {
     var indicator = Barrel.UI.statusInidicator();
@@ -227,3 +228,5 @@ function _askPrice( data ) {
         }
     }, {idProduct: data.productId, limit: 1} );
 }
+
+main();
