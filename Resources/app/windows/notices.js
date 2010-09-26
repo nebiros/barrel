@@ -46,6 +46,7 @@ function _loadNotices() {
         
         row.add( label );
         tableView = Titanium.UI.createTableView();
+        tableView.data = [];
         tableView.setData( [row] );
         win.add( tableView );
         indicator.hide();
@@ -60,6 +61,7 @@ function _loadNotices() {
 
     win.remove( tableView );
     tableView = Titanium.UI.createTableView();
+    tableView.data = [];
     tableView.setData( data );
     win.add( tableView );
     indicator.hide();
@@ -235,6 +237,7 @@ function _refreshMenu() {
     var notice = new Notice();
     var notices = notice.list();
     notice.close();
+    
     var product = new Product();
 
     // can't get multiple products at once :\.

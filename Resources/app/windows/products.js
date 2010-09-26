@@ -36,8 +36,8 @@ function _search() {
                     if ( data.length > 0 ) {
                         win.remove( tableView );
                         tableView = Titanium.UI.createTableView( {top: 40} );
+                        tableView.data = [];
                         tableView.setData( data );
-                        // add the table view to the window.
                         win.add( tableView );
                     } else {
                         var notification = Barrel.UI.notification( ":(, no se encontro ningún producto" );
@@ -74,9 +74,13 @@ function _loadProducts() {
             var data = _buildTable( products );
 
             if ( data.length > 0 ) {
+                if ( tableView ) {
+                    win.remove( tableView );
+                }
+                
                 tableView = Titanium.UI.createTableView( {top: 40} );
+                tableView.data = [];
                 tableView.setData( data );
-                // add the table view to the window.
                 win.add( tableView );
             } else {
                 win.remove( tableView );
@@ -96,6 +100,7 @@ function _loadProducts() {
 
                 row.add( label );
                 tableView = Titanium.UI.createTableView();
+                tableView.data = [];
                 tableView.setData( [row] );
                 win.add( tableView );
             }

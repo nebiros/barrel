@@ -18,7 +18,7 @@ Product = function ( app, key ) {
             }
 
             if ( false === Titanium.Network.online ) {
-                alert( "No existe conexión a internet!" );
+                alert( "please connect to the internet!" );
                 return;
             }
 
@@ -60,7 +60,7 @@ Product = function ( app, key ) {
             }
 
             if ( false === Titanium.Network.online ) {
-                alert( "No existe conexión a internet!" );
+                alert( "please connect to the internet!" );
                 return;
             }
 
@@ -92,7 +92,7 @@ Product = function ( app, key ) {
             }
 
             if ( false === Titanium.Network.online ) {
-                alert( "No existe conexión a internet!" );
+                alert( "please connect to the internet!" );
                 return;
             }
 
