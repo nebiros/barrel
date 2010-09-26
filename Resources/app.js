@@ -10,31 +10,31 @@ var tabGroup = Titanium.UI.createTabGroup( {
 //tabGroup.fireEvent( "reloadNotices", {} );
 
 // create base UI tab and root window
-var usersWindow = Titanium.UI.createWindow( {
-    url: "app/windows/top_users.js",
-    title: "+ Usuarios"
+var productsWindow = Titanium.UI.createWindow( {
+    url: "app/windows/products.js",
+    title: "+ productos"
 } );
 
 // focus/blur doesn't work for android (http://j.mp/9DDgdL), so I just add the
 // tabgroup object to each window tab and then in the sub-context I'm asking
 // for the activeTab to refresh the window content.
-usersWindow.tabGroup = tabGroup;
+productsWindow.tabGroup = tabGroup;
 
 var usersTab = Titanium.UI.createTab( {
-    title: "+ Usuarios",
+    title: "+ productos",
     icon: "images/icons/28-star.png",
-    window: usersWindow
+    window: productsWindow
 } );
 
 var noticesWindow = Titanium.UI.createWindow( {
     url: "app/windows/notices.js",
-    title: "Notificaciones"
+    title: "notificaciones"
 } );
 
 noticesWindow.tabGroup = tabGroup;
 
 var noticesTab = Titanium.UI.createTab( {
-    title: "Notificaciones",
+    title: "notificaciones",
     icon: "images/icons/11-clock.png",
     window: noticesWindow
 } );

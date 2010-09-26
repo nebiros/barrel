@@ -46,7 +46,7 @@ Barrel.Request = {
 Barrel.UI = {
     statusInidicator: function ( message ) {
         if ( typeof message == "undefined" ) {
-            message = "Cargando...";
+            message = "cargando...";
         }
 
         var indicator = Titanium.UI.createActivityIndicator( {
@@ -69,19 +69,31 @@ Barrel.UI = {
         }
 
         var alertDialog = Titanium.UI.createAlertDialog( {
-            title: "Atención",
+            title: "atención",
             message: message,
             buttonNames: buttons
         } );
 
         return alertDialog;
+    },
+    notification: function ( message ) {
+        if ( typeof message == "undefined" ) {
+            message = "";
+        }
+
+        var notification = Ti.UI.createNotification( {
+            message: message,
+            duration: Ti.UI.NOTIFICATION_DURATION_LONG
+        } );
+
+        return notification;
     }
 };
 
 Barrel.Text = {
     cut: function ( text, length, tail ) {
         if ( !text ) {
-            throw "text can notbe empty";
+            throw "text can not be empty";
         }
 
         if ( typeof length == "undefined" ) {
@@ -106,7 +118,7 @@ Barrel.Text = {
     },
     cleanUp: function ( text, lowerCase, glue ) {
         if ( !text ) {
-            throw "text can notbe empty";
+            throw "text can not be empty";
         }
 
         if ( typeof lowerCase == "undefined" ) {

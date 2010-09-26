@@ -7,7 +7,8 @@ var tableView;
 function main() {    
     _search();
     _loadProducts();
- }
+    _buildMenu();
+}
 
 function _search() {
     var search = Titanium.UI.createSearchBar( {
@@ -15,27 +16,33 @@ function _search() {
         showCancel: true,
         height: 43,
         top: 0,
-        hintText: "Buscar un producto..."
+        hintText: "buscar un producto..."
     } );
 
     search.addEventListener( "return", function ( e ) {
         this.blur();
-//        this.focus();
 
         var product = new Product();
         product.list( function () {
                 this.statusIndicator.show();
 
                 if ( 200 == this.status ) {
-                    win.remove( tableView );
                     var response = eval( "(" + this.responseText + ")" );
                     var products = response["products"];
                     Ti.API.debug( "search products length: " + products.length );
-                    tableView = Titanium.UI.createTableView( { top: 40 } );
-                    tableView.data = [];
-                    tableView.setData( _drawProductsTable( products ) );
-                    // add the table view to the window.
-                    win.add( tableView );
+                    
+                    var data = _buildTable( products );
+
+                    if ( data.length > 0 ) {
+                        win.remove( tableView );
+                        tableView = Titanium.UI.createTableView( {top: 40} );
+                        tableView.setData( data );
+                        // add the table view to the window.
+                        win.add( tableView );
+                    } else {
+                        var notification = Barrel.UI.notification( ":(, no se encontro ningún producto" );
+                        notification.show();
+                    }
                 }
 
                 if ( this.DONE == this.readyState ) {
@@ -63,11 +70,35 @@ function _loadProducts() {
             var response = eval( "(" + this.responseText + ")" );
             var products = response["products"];
             Ti.API.debug( "products length: " + products.length );
-            tableView = Titanium.UI.createTableView( { top: 40 } );
-            tableView.data = [];
-            tableView.setData( _drawProductsTable( products ) );
-            // add the table view to the window.
-            win.add( tableView );
+            
+            var data = _buildTable( products );
+
+            if ( data.length > 0 ) {
+                tableView = Titanium.UI.createTableView( {top: 40} );
+                tableView.setData( data );
+                // add the table view to the window.
+                win.add( tableView );
+            } else {
+                win.remove( tableView );
+
+                var row = Titanium.UI.createTableViewRow( {
+                    height: 80,
+                    className: "row"
+                } );
+
+                var label = Titanium.UI.createLabel( {
+                    text: "\\\\ no hay ningún producto :\\ \\\\",
+                    font: {fontSize: 10, fontWeight: "bold"},
+                    color: "#ffffff",
+                    textAlign: "left",
+                    width: "auto"
+                } );
+
+                row.add( label );
+                tableView = Titanium.UI.createTableView();
+                tableView.setData( [row] );
+                win.add( tableView );
+            }
         }
 
         // close status indicator.
@@ -80,10 +111,10 @@ function _loadProducts() {
     } );
 }
 
-function _drawProductsTable( products ) {
+function _buildTable( products ) {
     if ( typeof products != "object" ) {
         alert( "products must be an object" );
-        return;
+        return [];
     }
 
     var data = [];
@@ -150,7 +181,7 @@ function _drawProductsTable( products ) {
         productDataView.add( users );
 
         var price = Titanium.UI.createLabel( {
-            text: "\\\\ precio actual \\\\ " + Barrel.Text.numberFormat( precioActual, 0, "", "." ),
+            text: "\\\\ precio actual \\\\ $" + Barrel.Text.numberFormat( precioActual, 0, "", "." ),
             font: {fontSize: 10, fontWeight: "bold"},
             color: "#ffffff",
             textAlign: "left",
@@ -174,9 +205,9 @@ function _drawProductsTable( products ) {
 
         var _openNotificationDialog = function ( e ) {
             var confirmation = Titanium.UI.createAlertDialog( {
-                title: "Notificación",
-                message: "Notificar sobre el precio de este producto?",
-                buttonNames: ["Si", "No"],
+                title: "notificación",
+                message: "desea que se le notifique sobre el precio de este producto?",
+                buttonNames: ["si", "no"],
                 cancel: 1
             } );
 
@@ -186,7 +217,7 @@ function _drawProductsTable( products ) {
                         var notice = new Notice();
 
                         if ( notice.exist( idProducto ) ) {
-                            var alert = Barrel.UI.alert( "Este producto ya existe en la lista de notificaciones" );
+                            var alert = Barrel.UI.alert( "este producto ya existe en la lista de notificaciones!" );
                             alert.show();
                             return;
                         }
@@ -201,6 +232,9 @@ function _drawProductsTable( products ) {
                         } );
 
                         notice.close();
+
+                        var notification = Barrel.UI.notification( "ok, :)" );
+                        notification.show();
                         break;
 
                     case 1:
@@ -219,6 +253,20 @@ function _drawProductsTable( products ) {
     } )( key );
 
     return data;
+}
+
+function _buildMenu() {
+    var menu = Titanium.UI.Android.OptionMenu.createMenu();
+
+    var refreshItem = Titanium.UI.Android.OptionMenu.createMenuItem( {
+        title : "actualizar",
+        icon: "/images/icons/01-refresh.png"
+    } );
+
+    refreshItem.addEventListener( "click", _loadProducts );
+    menu.add( refreshItem );
+
+    Titanium.UI.Android.OptionMenu.setMenu( menu );
 }
 
 main();
