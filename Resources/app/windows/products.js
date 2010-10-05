@@ -2,7 +2,7 @@ Titanium.include( "../models/product.js" );
 Titanium.include( "../models/notice.js" );
 
 var win = Titanium.UI.currentWindow;
-var tableView;
+var tableView, query;
 
 function main() {    
     _search();
@@ -21,44 +21,56 @@ function _search() {
 
     search.addEventListener( "return", function ( e ) {
         this.blur();
-
-        var product = new Product();
-        product.list( function () {
-                this.statusIndicator.show();
-
-                if ( 200 == this.status ) {
-                    var response = eval( "(" + this.responseText + ")" );
-                    var products = response["products"];
-                    Ti.API.debug( "search products length: " + products.length );
-                    
-                    var data = _buildTable( products );
-
-                    if ( data.length > 0 ) {
-                        win.remove( tableView );
-                        tableView = Titanium.UI.createTableView( {top: 40} );
-                        tableView.data = [];
-                        tableView.setData( data );
-                        win.add( tableView );
-                    } else {
-                        var notification = Barrel.UI.notification( ":(, no se encontro ningún producto" );
-                        notification.show();
-                    }
-                }
-
-                if ( this.DONE == this.readyState ) {
-                    this.statusIndicator.hide();
-                }
-            }, {
-                orderBy: "usuarios DESC",
-                imageWidth: 48,
-                search: e.value
-        } );
+        query = e.value;
+        _processSearch();
     } );
 
     win.add( search );
 }
 
-function _loadProducts() {
+function _processSearch() {
+    var product = new Product();
+    product.list( function () {
+            this.statusIndicator.show();
+
+            if ( 200 == this.status ) {
+                var response = eval( "(" + this.responseText + ")" );
+                var products = response["products"];
+                Ti.API.debug( "search products length: " + products.length );
+
+                var data = _buildTable( products );
+
+                if ( data.length > 0 ) {
+                    win.remove( tableView );
+                    tableView = Titanium.UI.createTableView( {top: 40} );
+                    tableView.data = [];
+                    tableView.setData( data );
+                    win.add( tableView );
+                } else {
+                    var notification = Barrel.UI.notification( ":(, no se encontro ningún producto" );
+                    notification.show();
+                }
+            }
+
+            if ( this.DONE == this.readyState ) {
+                this.statusIndicator.hide();
+            }
+        }, {
+            orderBy: "usuarios DESC",
+            imageWidth: 48,
+            search: query
+    } );
+}
+
+function _loadProducts( opts ) {
+    if ( typeof opts == "undefined" ) {
+        opts = {};
+    }
+
+    if ( !opts.orderBy ) {
+        opts.orderBy = "usuarios DESC";
+    }
+
     var product = new Product();
     
     product.list( function () {
@@ -111,7 +123,7 @@ function _loadProducts() {
             this.statusIndicator.hide();
         }
     }, {
-        orderBy: "usuarios DESC",
+        orderBy: opts.orderBy,
         imageWidth: 48
     } );
 }
@@ -126,8 +138,7 @@ function _buildTable( products ) {
 
     for ( var key = 0; key < products.length; key++ ) ( function ( key ) {
         var row = Titanium.UI.createTableViewRow( {
-            height: 80,
-            className: "row"
+            height: 80
         } );
 
         var productDataView = Titanium.UI.createView( {
@@ -221,21 +232,20 @@ function _buildTable( products ) {
                     case 0:
                         var notice = new Notice();
 
-                        if ( notice.exist( idProducto ) ) {
+                        if ( notice.exists( idProducto ) ) {
                             var alert = Barrel.UI.alert( "este producto ya existe en la lista de notificaciones!" );
                             alert.show();
                             return;
                         }
 
-                        notice.add( {
-                            productId: idProducto,
+                        notice.save( {
+                            product_id: idProducto,
                             name: nombreProducto,
                             price: precioActual,
                             image: imagen,
                             users: usuarios,
                             url: url
                         } );
-
                         notice.close();
 
                         var notification = Barrel.UI.notification( "ok, :)" );
@@ -268,7 +278,16 @@ function _buildMenu() {
         icon: "/images/icons/01-refresh.png"
     } );
 
-    refreshItem.addEventListener( "click", _loadProducts );
+    refreshItem.addEventListener( "click", _processSearch );
+
+    var topProducts = Titanium.UI.Android.OptionMenu.createMenuItem( {
+        title : "top",
+        icon: "/images/icons/28-star.png"
+    } );
+
+    topProducts.addEventListener( "click", _loadProducts );
+    
+    menu.add( topProducts );
     menu.add( refreshItem );
 
     Titanium.UI.Android.OptionMenu.setMenu( menu );

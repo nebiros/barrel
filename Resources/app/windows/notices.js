@@ -3,7 +3,7 @@ Titanium.include( "../models/product.js" );
 Titanium.include( "../helpers/bottom_menu.js" );
 
 var win = Titanium.UI.currentWindow;
-var tableView;
+var tableView, listeners = [];
 
 function main() {
     // HACK: get active tab index.
@@ -76,10 +76,12 @@ function _buildTable( notices ) {
     var data = [];
 
     for ( var key = 0; key < notices.length; key++ ) ( function ( key ) {
+        if ( listeners[key] ) {
+            clearInterval( listeners[key] ); // clear listener
+        }
+        
         var row = Titanium.UI.createTableViewRow( {
-            height: 80,
-            className: "row",
-            productId: notices[key].productId
+            height: 80
         } );
 
         var productDataView = Titanium.UI.createView( {
@@ -163,9 +165,9 @@ function _buildTable( notices ) {
                 switch ( parseInt( e.index ) ) {
                     case 0:
                         var notice = new Notice();
-                        notice.remove( notices[key].id );
+                        notice.destroy( notices[key].id );
                         notice.close();
-
+                        
                         _loadNotices();
                         break;
 
@@ -183,7 +185,7 @@ function _buildTable( notices ) {
         row.className = "item" + key;
         data[key] = row;
 
-        setInterval( function () {
+        listeners[key] = setInterval( function () {
             _askPrice( notices[key] );
         }, CONFIG.NOTICES_INTERVAL );
     } )( key );
@@ -204,19 +206,22 @@ function _askPrice( data ) {
         if ( 200 == this.status ) {
             var response = eval( "(" + this.responseText + ")" );
             var productData = response["products"][0];
+            
+            Ti.API.debug( "asking price kactoos: " + data.name + " -- " + productData.precio_actual );
+            Ti.API.debug( productData );
 
-            if ( productData.precio_actual < data.price ) {
+            if ( productData.precio_actual != data.price ) {
                 var notice = new Notice();
-                notice.updatePrice( data.id, productData.precio_actual );
+                notice.update( {price: productData.precio_actual, users: productData.usuarios}, {"id = ?": data.id} );
                 notice.close();
-
+                
                 var notification = Barrel.UI.notification( data.name + " cambio de precio!, $" + Barrel.Text.numberFormat( productData.precio_actual, 0, "", "." ) );
                 notification.show();
                 
                 _loadNotices();
             }
         }
-    }, {idProduct: data.productId, limit: 1} );
+    }, {idProduct: data.product_id, limit: 1} );
 }
 
 function _buildMenu() {
@@ -240,29 +245,46 @@ function _refreshMenu() {
     
     var product = new Product();
 
+    Ti.API.debug( "notices length refresh: " + notices.length );
+
     // can't get multiple products at once :\.
-    for ( var key = 0; key < notices.length; key++ ) ( function ( key ) {        
+    for ( var key = 0; key < notices.length; key++ ) ( function ( key ) {
+        clearInterval( listeners[key] ); // clear listener
+        
         product.list( function () {
             if ( 200 == this.status ) {
                 var response = eval( "(" + this.responseText + ")" );
                 var productData = response["products"][0];
 
+                Ti.API.debug( "producy refresh data: " + notices[key].name + " -- " + notices[key].price );
+
                 var notice = new Notice();
 
                 // if this product is not active then don't draw it.
                 if ( 1 != parseInt( productData.activo ) ) {
-                    notice.remove( notices[key].id );
-                    notice.close();
+                    notice.destroy( notices[key].id );
                     tableView.deleteRow( key, {animationStyle: Titanium.UI.iPhone.RowAnimationStyle.UP} );
+
+                    var notification = Barrel.UI.notification( notices[key].name + " parece que ya no está activo :(" );
+                    notification.show();
 
                     return;
                 }
 
-                notice.updatePrice( notices[key].id, productData.precio_actual );
+                if ( productData.precio_actual || productData.usuarios ) {
+                    notice.update( {price: productData.precio_actual, users: productData.usuarios}, {"id = ?": notices[key].id} );
+                }
+                
                 notice.close();
             }
-        }, {idProduct: notices[key].productId, limit: 1} );
+        }, {idProduct: notices[key].product_id, limit: 1} );
     } )( key );
+
+    // delay two secs to update the table, cause kactoos api doesn't have a method
+    // to get data for multiple products at once.
+    setTimeout( function () {
+        _loadNotices();
+    }, 2000 );
 }
 
 main();

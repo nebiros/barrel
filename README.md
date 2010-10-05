@@ -3,8 +3,17 @@ Barrel
 _Barrel cactus_
 
 Barrel is an android app build on top of [titanium mobile framework](http://www.appcelerator.com/products/titanium-mobile-application-development/),
-it shows [kactoos](http://www.kactoos.com) API capabilities. You can search products and receive notifications for each product that you add to the
-database, you can remove those products too. Barrel is a titanium sandbox, to learn and play with the titanium API.
+it shows [kactoos](http://www.kactoos.com) API capabilities. Barrel is a titanium sandbox, to learn and play with the titanium API.
+
+Features
+========
+
+* Display top products, products with most users.
+* Search products.
+* Discount notifications.
+* Update products data that you have in your notifications list.
+* You can see the product information using your native browser.
+* Barrel provides a namespace with methods for many common operations on tables, just extend it!.
 
 Install
 =======
